@@ -1,6 +1,18 @@
 import os
 import re
 import shutil
+import ast
+
+def find_strings_in_python_file(content):
+    strings = []
+    
+    tree = ast.parse(content)
+        
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Str):  # Verifica se o nó é uma string
+            strings.append((node.lineno, node.s))
+    
+    return strings
 
 def find_and_replace_strings(file_path, target_strings, output_dir):
     # Criar diretório de saída se não existir
@@ -36,14 +48,40 @@ def find_and_replace_strings(file_path, target_strings, output_dir):
                 # Realizar substituições nas cópias
                 with open(output_file_path, 'r+') as f:
                     content = f.read()
+
                     for target in target_strings:
-                        if file_name.endswith(".sh"):
+                        if file_name.endswith(".sh"): # Linha de arquivo .sh
                             content = re.sub(re.escape(target), f"${{{target}}}", content)
+                            
+                            # Adiciona variavel de ambiente no inicio do codigo
+                            content = f"{target}=\n" + content
+
+                        elif file_name.endswith(".py"):
+                            tree = ast.parse(content)
+                            for node in ast.walk(tree):
+                                if isinstance(node, ast.Str):
+                                    original_string = node.s
+                                    if (f"'''{original_string}'''") in content: # Linha de arquivo .py com três aspas simples
+                                        modified_string  = original_string.replace(target, f"''' + {target} + '''")
+                                        content = content.replace(f"'''{original_string}'''", f"'''{modified_string}'''")
+                                    elif (f'"""{original_string}"""') in content: # Linha de arquivo .py com três aspas dupla
+                                        modified_string  = original_string.replace(target, f'""" + {target} + """')
+                                        content = content.replace(f'"""{original_string}"""', f'"""{modified_string}"""')
+                                    elif (f"'{original_string}'") in content: # Linha de arquivo .py com aspas simples
+                                        modified_string  = original_string.replace(target, f"' + {target} + '")
+                                        content = content.replace(f"'{original_string}'", f"'{modified_string}'")
+                                    else: # Linha de arquivo .py com aspas dupla
+                                        modified_string  = original_string.replace(target, f'" + {target} + "')
+                                        content = content.replace(f'"{original_string}"', f'"{modified_string}"')
+
+                            content = f"{target} = os.environ['{target}']\n" + content
                         else:
-                            content = re.sub(re.escape(target), f"{{{target}}}", content)
-                    f.seek(0)
-                    f.write(content)
-                    f.truncate()
+                            content = content
+                        
+
+                        f.seek(0)
+                        f.write(content)
+                        f.truncate()
 
 if __name__ == "__main__":
     input_directory = input("Digite o caminho do diretório: ")

@@ -1,0 +1,13 @@
+Arquivo: test.py, Palavra: variavel, Linha: 1
+Arquivo: test.py, Palavra: ambiente, Linha: 1
+Arquivo: test.py, Palavra: variavel, Linha: 2
+Arquivo: test.py, Palavra: ambiente, Linha: 2
+Arquivo: test.py, Palavra: variavel, Linha: 3
+Arquivo: test.py, Palavra: variavel, Linha: 4
+Arquivo: test.py, Palavra: ambiente, Linha: 4
+Arquivo: test.py, Palavra: variavel, Linha: 7
+Arquivo: test.py, Palavra: variavel, Linha: 8
+Arquivo: test.py, Palavra: ambiente, Linha: 8
+Arquivo: test.py, Palavra: ambiente, Linha: 11
+Arquivo: test.sh, Palavra: ambiente, Linha: 1
+Arquivo: test.sh, Palavra: ambiente, Linha: 3

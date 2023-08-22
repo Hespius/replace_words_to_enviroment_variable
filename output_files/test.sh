@@ -1,0 +1,5 @@
+ambiente=
+variavel=
+${ambiente}
+
+'${ambiente}'
